@@ -1,0 +1,473 @@
+* {
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+}
+
+:root {
+  --button-active: hsl(175, 77%, 16%);
+  --button-hover: hsl(175, 77%, 36%);
+  --button-color: hsl(175, 77%, 26%);
+  --button-text: white;
+  --border-color: black;
+}
+
+body {
+  display: grid;
+  width: 100vw;
+  height: 100vh;
+  grid-template-columns: minmax(200px, 10%) 90%;
+  grid-template-rows: 75px 1fr 30px;
+}
+
+header {
+  grid-column: 1 / 3;
+  grid-row: 1 / 2;
+  border-bottom: 2px solid var(--border-color);
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  color: white;
+  background-color: black;
+  box-shadow: 0px 2px 6px 0px rgba(5, 5, 5, 0.40);
+}
+
+footer {
+  grid-column: 1 / 3;
+  grid-row: 3 / 4;
+  border-bottom: 2px solid black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  background-color: black;
+}
+
+.logo-text {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+aside {
+  height: 100%;
+  grid-column: 1 / 2;
+  grid-row: 2 / 3;
+  border-right: 2px solid var(--border-color);
+  display: grid;
+  grid-template-columns: 50% 50%;
+  grid-template-rows: 50px 1fr;
+  box-shadow: 0px 2px 6px 0px rgba(5, 5, 5, 0.40);
+
+}
+
+.container {
+  width: 100%;
+  height: 95%;
+  grid-column: 2 / 3;
+  grid-row: 2 / 3;
+  margin: 20px;
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fill, 300px);
+  grid-template-rows: repeat(auto-fill, 400px);
+}
+
+.container>div {
+  width: 100%;
+}
+
+.logo {
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+  margin-left: 20px;
+}
+
+.new {
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+  margin-top: 13px;
+  grid-column: 2/3;
+  grid-row: 1/2;
+  justify-self: end;
+}
+
+.new:hover {
+  cursor: pointer;
+  transform: scale(1.2);
+}
+
+.new:active {
+  transform: scale(1.1)
+}
+
+.project-text {
+  font-weight: bold;
+  font-size: 1.7rem;
+  margin-top: 15px;
+  margin-left: 15px;
+  grid-row: 1/2;
+  color: black;
+}
+
+.project-container {
+  grid-column: 1/3;
+  grid-row: 2/3;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.project {
+  width: 85%;
+  height: 40px;
+  display: grid;
+  align-items: center;
+  grid-template-columns: 30px 1fr 30px;
+  padding-left: 20px;
+}
+
+.project-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-left: 0px;
+}
+
+.project-image {
+  width: 25px;
+  height: 25px;
+  margin-bottom: 1px
+}
+
+.project:hover .delete-project {
+  visibility: visible;
+}
+
+.delete-project {
+  width: 25px;
+  height: 25px;
+  visibility: hidden;
+  margin-bottom: 5px;
+}
+
+.delete-project:hover {
+  transform: scale(1.2);
+}
+
+.delete-project:active {
+  transform: scale(1.1);
+}
+
+.add-project {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 40% 40%;
+  margin-left: 5%;
+  column-gap: 0.5rem;
+}
+
+.add-project>input {
+  width: 96%;
+  grid-column: 1 / 3;
+}
+
+.add-project>button {
+  width: 100%;
+  margin-top: 0.5rem;
+  height: 1.5rem;
+  grid-row: 2 / 3;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.add-button {
+  background-color: rgba(90, 219, 90, 0.788);
+  border-radius: 5px;
+  border: none;
+}
+
+.cancel-button {
+  background-color: rgba(247, 110, 110, 0.795);
+  border-radius: 5px;
+  border: none;
+}
+
+.todoCard {
+  height: 100%;
+  width: 100%;
+  border: 5px solid blue;
+  display: flex;
+  flex-direction: column;
+  border-radius: 15px;
+  box-shadow: 0px 4px 10px 02px rgba(5, 5, 5, 0.40);
+}
+
+fieldset {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+fieldset {
+  display: grid;
+  grid-template-rows: 45px 30px 1fr 30px 35px 30px 35px 35px;
+  height: 100%;
+  width: 100%;
+}
+
+
+input {
+  font-family: inherit;
+}
+
+.todoCard input:disabled,
+select:disabled {
+  border: none;
+  color: black;
+  user-select: all;
+  cursor: text;
+  font-family: inherit;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  -moz-user-select: text;
+  -webkit-user-select: text;
+  -ms-user-select: text;
+  -o-user-select: text;
+
+}
+
+.changeTodo {
+  width: 20px;
+  height: 20px;
+  position: relative;
+  left: 85%;
+  top: -3.5%;
+  visibility: hidden;
+}
+
+.saveChange {
+  width: 30px;
+  height: 30px;
+  left: 84%;
+  top: -5%;
+}
+
+.changeTodo:hover,
+.delete-todo:hover {
+  transform: scale(1.2);
+}
+
+.changeTodo:active,
+.delete-todo:active {
+  transform: scale(1.1);
+}
+
+.todoCard:hover .changeTodo {
+  visibility: visible;
+}
+
+.delete-todo {
+  width: 20px;
+  height: 20px;
+  position: relative;
+  left: 93%;
+  top: -7.6%;
+  visibility: hidden;
+}
+
+.tempDelete {
+  width: 20px;
+  height: 20px;
+  position: relative;
+  left: 93%;
+  top: -10%;
+  visibility: hidden;
+}
+
+
+.todoCard:hover .delete-todo {
+  visibility: visible;
+}
+
+textarea {
+  max-height: 144px;
+}
+
+.todoTitle {
+  font-weight: bold;
+  font-size: 1.2rem;
+  text-align: center;
+  margin-top: 5px;
+  height: 30px;
+  width: 90%;
+  margin-left: 4%;
+  margin-bottom: 20px;
+}
+
+.todoCategory {
+  font-size: 1.3rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  margin-left: 10px;
+}
+
+.todoText {
+  font-size: 1.1rem;
+  width: 90%;
+  margin-bottom: 10px;
+  margin-left: 10px;
+  margin-right: 10px;
+  resize: vertical;
+  margin: -5px 10px 10px 10px;
+
+}
+
+.todoText:disabled {
+  color: black;
+  border: none;
+  resize: none;
+}
+
+li>input.todoText {
+  margin-bottom: 0px;
+}
+
+.newCard {
+  display: grid;
+  grid-template-columns: 30% 1fr;
+}
+
+.newCard>input {
+  height: 20px;
+}
+
+.newCardCheck {
+  grid-column: 1 / 3;
+}
+
+.newCardChecklist {
+  margin-left: 10px;
+}
+
+.newtodoinput {
+  margin: -5px 10px 10px 10px;
+}
+
+.priorityinput {
+  margin-bottom: 10px;
+  margin-left: 10px;
+  margin-right: 10px;
+  width: 100px;
+  border-radius: 5px;
+  border: 1px solid black;
+}
+
+.addcheck,
+.removecheck {
+  height: 20px;
+  width: 20px;
+  margin: 5px 10px 10px 14px
+}
+
+.addcheck:hover,
+.removecheck:hover {
+  transform: scale(1.2)
+}
+
+.addcheck:active,
+.removecheck:hover {
+  transform: scale(1.1);
+}
+
+#todotitle {
+  height: 30px;
+  width: 90%;
+  margin-left: 4%;
+  margin-bottom: 20px;
+}
+
+#submittodo {
+  margin: 10px;
+  width: 100px;
+  align-self: center;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+#submittodo:hover {
+  transform: scale(1.1);
+}
+
+#submittodo:active {
+  transform: scale(1.2);
+}
+
+.create-todo {
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  background-color: hsl(175, 77%, 26%);
+  color: white;
+}
+
+.add-todoButton {
+  height: 100%;
+  background-color: var(--button-color);
+  width: 100%;
+  font-family: inherit;
+  border: none;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.add-todoButton:hover {
+  background-color: var(--button-hover);
+  transform: scale(1.2);
+}
+
+.add-todoButton:active {
+  background-color: var(--button-active);
+  transform: scale(1.1);
+}
+
+.todoControls {
+  visibility: hidden;
+  height: 30px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.todoCard:hover .todoControls {
+  visibility: visible;
+}
+
+
+
+@media (max-width: 700px) {
+
+  .container {
+    margin-left: 10px;
+    padding-left: 0;
+    width: 100%;
+    grid-column: 1 /3;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 95%));
+  }
+
+  .create-todo {
+    left: 5%;
+    display: none;
+  }
+
+  body {
+    height: auto;
+  }
+
+  .todoCard {
+    margin-left: 0;
+    padding-left: 0;
+  }
+}

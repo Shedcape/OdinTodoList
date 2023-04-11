@@ -1,0 +1,1 @@
+//The purpose of this module is to solely handle everything related to the DOM
