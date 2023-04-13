@@ -1,7 +1,7 @@
 import logo from "../assets/things-to-do-icon-16.jpg"
 import newProjectImage from "../assets/plus-icon-17.jpg"
 
-export default function initialize() {
+export default function initialize(projectId = 0) {
   const body = document.querySelector('body');
   body.innerHTML = `
     <header>
@@ -10,11 +10,11 @@ export default function initialize() {
     </header>
     <aside>
       <h2 class="project-text">Projects</h2>
-      <img class="new" src="${newProjectImage}" alt="New Project">
-      <div class="project-container">
+      <img class="newProjectPromptButton" src="${newProjectImage}" alt="New Project">
+      <div class="project-container" >
       </div>
     </aside>
-    <div class="container" id="0">
+    <div class="container" data-currentprojectid=${projectId}>
       <div class="todoCard create-todo">
         <form class="todoCard create-todo" action="">
           <input class="todoTitle createTitle" type="text" name="todotitle" id="todotitle" placeholder="Title of the Todo">
@@ -53,17 +53,6 @@ export default function initialize() {
           </div>
         </fieldset>
       </div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
     </div>
     <footer>
       By Shedcape
