@@ -1,7 +1,7 @@
 import logo from "../assets/things-to-do-icon-16.jpg"
 import newProjectImage from "../assets/plus-icon-17.jpg"
 
-export default function initialize(projectId = 0) {
+export default function initializeDom(projectId = 0) {
   const body = document.querySelector('body');
   body.innerHTML = `
     <header>
@@ -30,9 +30,6 @@ export default function initialize(projectId = 0) {
           </select>
           <button type="submit" class="add-button" id="submittodo">Add Todo</button>
         </form>
-      </div>
-      <div>    
-        <button class="add-todoButton">Add todo</button> 
       </div>
       <div class="todoCard">
         <fieldset>

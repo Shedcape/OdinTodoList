@@ -1,10 +1,10 @@
-import initialize from "./modules/initialize";
+import initializeDom from "./modules/initialize";
 import ProjectsList from "./modules/ProjectsList";
 import { domProjectManager, domTodoManager } from "./modules/domManager";
 import "./reset.css";
 import "./style.css";
 
-initialize();
+initializeDom();
 
 
 class Project {
@@ -14,41 +14,59 @@ class Project {
     this.todos = [];
   }
 }
-const dummyProject = [{ name: "Test", active: true, todos: [{ title: "Hi", description: "Call the electric company regarding the bill.", dueDate: "2023-04-14", priority: "Medium" }] }]
-let projectsList = new ProjectsList(dummyProject);
+const dummyProject = { name: "Test", active: true, todos: [{ title: "Hi", description: "Call the electric company regarding the bill.", dueDate: "2023-04-14", priority: "Medium" }] }
+let projectsList = new ProjectsList();
+projectsList.addProject(dummyProject);
 
-const addTodoButton = document.querySelector('.add-todoButton');
-addTodoButton.addEventListener('click', (e) => {
-  const container = document.querySelector('.container');
-  const div = document.createElement('div')
-  div.classList.add('todoCard');
-  div.classList.add('create-todo');
-  div.innerHTML = `
-    <form class="todoCard create-todo" action="">
-      <input class="todoTitle createTitle" type="text" name="todotitle" id="todotitle" placeholder="Title of the Todo">
-      <p class="todoCategory">Description:</p>
-      <textarea class="newtodoinput" name="tododesc" id="tododesc"></textarea>
-      <p class="todoCategory">Due date:</p>
-      <input class="newtodoinput" type="date" name="tododuedate" id="tododuedate">
-      <p class="todoCategory">Priority:</p>
-      <select class="priorityinput" name="todopriority" id="todopriority">
-        <option value="Low">Low</option>
-        <option value="Medium">Medium</option>
-        <option value="High">High</option>
-      </select>
-      <button type="submit" class="add-button" id="submittodo">Add Todo</button>
-    </form>`
-  container.appendChild(div);
-  console.log("success")
-})
+const storageController = {
+  retrieve() {
+    const projects = JSON.parse(localStorage.getItem("projects"));
+    console.log(projects)
+  },
+  store() {
+    localStorage.setItem("projects", JSON.stringify(projectsList));
+  },
+  clear() {
+    localStorage.clear()
+  }
+}
+storageController.store();
+storageController.retrieve();
+storageController.clear();
+const eventController = {
+  addTodoButtonListener() {
+    const addTodoButton = document.querySelector('.add-todobuttoncontainer')
+    addTodoButton.addEventListener('click', () => todoController.addTodo(false, true))
+  },
+  addSaveButtonListener(todoid) {
+    const saveButton = document.querySelector(`[data-savetodoid="${todoid}"]`)
+    saveButton.addEventListener('click', (e) => {
+      const todoid = Number(e.target.dataset.todoid)
+      const projectid = Number(e.target.dataset.projectid)
+      todoController.saveTodo(todoid, projectid)
+    })
+  },
+  addChangeButtonListener(todoid) {
+    const changeButton = document.querySelector(`[data-changetodoid="${todoid}"]`)
+    changeButton.addEventListener('click', (e) => todoController.changeTodo(e))
+  },
+  addDeleteButtonListener(todoid) {
+    const deleteButton = document.querySelector(`[data-deletetodoid="${todoid}"]`)
+  },
+  addNewProjectButtonListener() {
+    document.querySelector('.add-button').addEventListener('click', projectController.addNewProject);
+  },
+  cancelNewProjectListener() {
+    document.querySelector('.cancel-button').addEventListener('click', domProjectManager.removeNewProjectPrompt)
+  },
+
+}
 
 const projectController = {
   addNewProjectPrompt() {
     domProjectManager.newProjectPrompt();
-    const projectPrompt = document.querySelector('.add-project');
-    document.querySelector('.add-button').addEventListener('click', projectController.addNewProject);
-    console.log("hi")
-    document.querySelector('.cancel-button').addEventListener('click', domProjectManager.removeNewProjectPrompt)
+    eventController.addNewProjectButtonListener()
+    eventController.cancelNewProjectListener();
   },
   addNewProject() {
     const input = document.getElementById('project-name').value
@@ -60,22 +78,34 @@ const projectController = {
     const newProjectElement = document.querySelector(`[data-projectid="${id}"]`);
     newProjectElement.children[1].addEventListener('click', (e) => {
       //Todo: Fill in the logic for switching between projects
-      console.log(e)
-      projectController.switchProject()
+      projectController.switchProject(e)
     })
     newProjectElement.children[2].addEventListener('click', (e) => {
       //Todo: Fill in the logic for deleting project. 
-      console.log(e)
       todoController.clearTodos();
     })
-    console.log(projectsList.currentProject)
   },
-  switchProject() {
+  switchProject(e) {
+    const targetProjectId = Number(e.target.dataset.projectid)
     const todoContainer = document.querySelector('.container')
-    console.log(todoContainer)
-    console.log(todoContainer.dataset.currentprojectid)
     const currentProjectId = Number(todoContainer.dataset.currentprojectid)
+    projectsList.deActivateProject(currentProjectId);
+    projectsList.activateProject(targetProjectId)
+    todoController.emptyContainer();
+    todoContainer.dataset.currentprojectid = targetProjectId;
 
+    projectController.loadProject(targetProjectId);
+
+  },
+  loadProject(projectid) {
+    const todos = projectsList.retrieveTodos(projectid);
+    const todoContainer = document.querySelector('.container')
+    todoContainer.dataset.currentprojectid = projectid;
+    if (todos.length === 0) {
+      todoController.addNewTodoButton()
+    } else {
+      todos.forEach(todo => todoController.addTodo(todo, false))
+    }
   }
 }
 
@@ -85,36 +115,60 @@ const todoController = {
   },
   addNewTodoButton() {
     domTodoManager.addTodoButton();
-    const addTodoButton = document.querySelector('.add-todoButton');
-    addTodoButton.addEventListener('click', todoController.addNewTodo)
+    eventController.addTodoButtonListener();
   },
-  addTodo() {
+  addTodo(todoContent, change = true) {
     const projectid = projectsList.currentProject;
     const todoid = projectsList.todoLength(projectid)
-    console.log(projectid, todoid)
-    const todoContent = { title: "", description: "", dueDate: "", priority: "" }
-    domTodoManager.createTodo(todoid, projectid, todoContent)
+    if (!todoContent) {
+      todoContent = { title: "", description: "", dueDate: "", priority: "" }
+    }
+    domTodoManager.removeAddTodoButton()
+    domTodoManager.createTodo(todoid, projectid, todoContent, change)
     projectsList.addToDo(projectid, todoContent)
-    const saveButton = document.querySelector(`[data-savetodoid="${todoid}"]`)
-    saveButton.addEventListener('click', (e) => todoController.saveTodo(e))
+    if (!change) {
+      eventController.addChangeButtonListener(todoid)
+    } else {
+      eventController.addSaveButtonListener(todoid);
+    }
+    eventController.addDeleteButtonListener(todoid);
     const deleteButton = document.querySelector(`[data-deletetodoid="${todoid}"]`)
+    domTodoManager.addTodoButton();
+    eventController.addTodoButtonListener();
   },
-  saveTodo(e) {
-    console.log(e)
-    console.log(e.target)
-    console.log(e.target.dataset.todoid)
-    const todoid = Number(e.target.dataset.todoid)
-    const projectid = Number(e.target.dataset.projectid)
+  saveTodo(todoid, projectid) {
 
     const test = Array.from(document.querySelectorAll(`[data-inputfortodo="${todoid}"]`))
     const updatedTodo = { title: test[0].value, description: test[1].value, dueDate: test[2].value, priority: test[3].value }
     projectsList.updateTodo(projectid, todoid, updatedTodo);
-    console.log(projectsList.retrieveTodos(projectid))
+
     domTodoManager.saveTodo(todoid)
+    eventController.addChangeButtonListener(todoid);
+    eventController.addDeleteButtonListener(todoid);
+  },
+  changeTodo(e) {
+    const todoid = Number(e.target.dataset.todoid)
+    const projectid = Number(e.target.dataset.projectid)
+    domTodoManager.changeTodo(todoid);
+    eventController.addSaveButtonListener(todoid);
+    eventController.addDeleteButtonListener(todoid);
+  },
+  emptyContainer() {
+    const change = Array.from(document.querySelectorAll(`[data-todostatus="change"]`))
+    if (change.length > 0) {
+      change.forEach(todo => {
+        const todoid = Number(todo.dataset.todoid)
+        const projectid = Number(todo.dataset.projectid)
+        todoController.saveTodo(todoid, projectid);
+      })
+    }
+    domTodoManager.clearOutTodos();
   }
 }
 
 document.querySelector('.newProjectPromptButton').addEventListener('click', () => {
   projectController.addNewProjectPrompt();
 })
-todoController.addTodo()
+todoController.addNewTodoButton();
+todoController.emptyContainer()
+projectController.loadProject(0)

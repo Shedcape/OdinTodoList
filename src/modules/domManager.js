@@ -20,7 +20,7 @@ const domCreation = {
     div.classList.add('project')
     div.innerHTML = `
       <img class="project-image" src=${projectImage} alt="Project">
-      <h3 class="project-name">${input}</h3>
+      <h3 class="project-name" data-projectid="${id}">${input}</h3>
       <img class="delete-project" src=${deleteImage} alt="Delete Project">
     `
     return div;
@@ -34,7 +34,7 @@ const domCreation = {
     const { title, description, dueDate, priority } = todoContent;
     div.innerHTML = `
     <div class="create-todo">
-      <form class="todoCard create-todo formlayout" action="" data-projectid="${projectid}" data-todoid="${todoid}">
+      <form class="formlayout" action="" data-projectid="${projectid}" data-todoid="${todoid}" data-todostatus="change">
         <input class="todoTitle createTitle" type="text" name="todotitle" id="todotitle" placeholder="Title of the Todo" data-inputfortodo="${todoid}" value="${title}">
         <p class="todoCategory">Description:</p>
         <textarea class="todoText" name="tododesc" id="tododesc" data-inputfortodo="${todoid}">${description}</textarea>
@@ -48,21 +48,19 @@ const domCreation = {
         </select>
       </form>
       <div class="todoControls">
-        <button data-savetodoid="${todoid}" data-todoid="${todoid}">Save</button>
-        <button data-deletetodoid="${todoid}" data-todoid="${todoid}">Delete</button>
+        <button data-savetodoid="${todoid}" data-todoid="${todoid}" data-projectid="${projectid}">Save</button>
+        <button data-deletetodoid="${todoid}" data-todoid="${todoid}" data-projectid="${projectid}">Delete</button>
       </div>
     </div>`
     container.appendChild(div);
-    console.log("success")
   },
   convertToCompleteTodo(todoid) {
     const test = Array.from(document.querySelectorAll(`[data-inputfortodo="${todoid}"]`));
     const div = document.querySelector(`[data-containerfortodo="${todoid}"]`)
-    console.log(test, div)
     const projectid = Number(document.querySelector(`[data-todoid="${todoid}"]`).dataset.projectid)
     div.innerHTML = `
       <div class="create-todo">
-        <div class="formlayout" data-projectid="${projectid}" data-todoid="${todoid}">
+        <div class="formlayout" data-projectid="${projectid}" data-todoid="${todoid}" data-todostatus="notchange">
           <h2 data-inputfortodo="${todoid}">${test[0].value}</h2>
           <p class="todoCategory">Description:</p>
           <p class="todoText" id="tododesc" data-inputfortodo="${todoid}">${test[1].value}</p>
@@ -72,8 +70,8 @@ const domCreation = {
           <p class="todoText" data-inputfortodo="${todoid}">${test[3].value}</p>
         </div>
         <div class="todoControls">
-          <button data-changetodoid="${todoid}" data-todoid="${todoid}">Change</button>
-          <button data-deletetodoid="${todoid}">Delete</button>
+          <button data-changetodoid="${todoid}" data-todoid="${todoid}" data-projectid="${projectid}">Change</button>
+          <button data-deletetodoid="${todoid} data-projectid="${projectid}"">Delete</button>
         </div>
       </div>
     `
@@ -81,12 +79,11 @@ const domCreation = {
   convertToChangeTodo(todoid) {
     const test = Array.from(document.querySelectorAll(`[data-inputfortodo="${todoid}"]`))
     const div = document.querySelector(`[data-containerfortodo="${todoid}"]`)
-    console.log(test, div)
     const projectid = Number(document.querySelector(`[data-todoid="${todoid}"]`).dataset.projectid)
 
     div.innerHTML = `
     <div class="create-todo">
-      <form class="formlayout" action="" data-projectid="${projectid}" data-todoid="${todoid}">
+      <form class="formlayout" action="" data-projectid="${projectid}" data-todoid="${todoid}" data-todostatus="change">
         <input class="todoTitle createTitle" type="text" name="todotitle" id="todotitle" placeholder="Title of the Todo" data-inputfortodo="${todoid}" value="${test[0].innerHTML}">
         <p class="todoCategory">Description:</p>
         <textarea class="todoText" name="tododesc" id="tododesc" data-inputfortodo="${todoid}">${test[1].innerHTML}</textarea>
@@ -114,7 +111,6 @@ const domProjectManager = {
     if (document.getElementById('project-name')) return;
     const projectContainer = document.querySelector('.project-container')
     const div = domCreation.newProjectPrompt();
-    console.log(projectContainer)
     projectContainer.appendChild(div);
   },
   removeNewProjectPrompt() {
@@ -142,18 +138,30 @@ const domTodoManager = {
   addTodoButton() {
     const todoContainer = document.querySelector(".container");
     const div = document.createElement('div');
+    div.classList.add('add-todobuttoncontainer')
     div.innerHTML = `
       <button class="add-todoButton">Add todo</button>
     `
     todoContainer.appendChild(div);
   },
-  createTodo(todoid, projectid, todoContent) {
+  createTodo(todoid, projectid, todoContent, change) {
     domCreation.createTodo(todoid, projectid, todoContent)
-    domCreation.convertToCompleteTodo(todoid)
-    domCreation.convertToChangeTodo(todoid)
+    if (!change) {
+      domCreation.convertToCompleteTodo(todoid);
+    }
   },
   saveTodo(todoid) {
-    domCreation.convertToCompleteTodo(todoid)
+    domCreation.convertToCompleteTodo(todoid);
+  },
+  changeTodo(todoid) {
+    domCreation.convertToChangeTodo(todoid);
+  },
+  removeAddTodoButton() {
+    const todoContainer = document.querySelector(".container");
+    if (todoContainer.lastElementChild) {
+      todoContainer.removeChild(todoContainer.lastElementChild);
+    }
+
   }
 }
 

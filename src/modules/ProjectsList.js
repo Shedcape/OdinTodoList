@@ -1,5 +1,5 @@
 export default class ProjectsList {
-  constructor(list) {
+  constructor(list = []) {
     this.list = list;
   }
   get length() {
@@ -7,7 +7,6 @@ export default class ProjectsList {
   }
   get currentProject() {
     const id = this.list.findIndex(project => project.active)
-    console.log(this.list, id)
     return id;
   }
   addProject(project) {
@@ -38,5 +37,11 @@ export default class ProjectsList {
   }
   todoLength(projectid) {
     return this.list[projectid].todos.length;
+  }
+  activateProject(projectid) {
+    this.list[projectid].active = true;
+  }
+  deActivateProject(projectid) {
+    this.list[projectid].active = false;
   }
 }
