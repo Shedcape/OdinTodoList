@@ -197,23 +197,22 @@ aside {
 .todoCard {
   height: 100%;
   width: 100%;
-  border: 5px solid blue;
-  display: flex;
-  flex-direction: column;
+  border: 3px solid blue;
   border-radius: 15px;
   box-shadow: 0px 4px 10px 02px rgba(5, 5, 5, 0.40);
 }
 
-fieldset {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  width: 100%;
+h2 {
+  font-size: 1.5em;
+  text-align: center;
+  font-weight: bold;
+  margin: 0;
+  margin-top: 5px;
 }
 
-fieldset {
+.formlayout {
   display: grid;
-  grid-template-rows: 45px 30px 1fr 30px 35px 30px 35px 35px;
+  grid-template-rows: 45px 30px 1fr 30px 35px 30px 35px;
   height: 100%;
   width: 100%;
 }
@@ -293,7 +292,7 @@ select:disabled {
 }
 
 textarea {
-  max-height: 144px;
+  max-height: 140px;
 }
 
 .todoTitle {
@@ -308,7 +307,7 @@ textarea {
 }
 
 .todoCategory {
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   font-weight: bold;
   margin-bottom: 10px;
   margin-left: 10px;
@@ -411,6 +410,8 @@ li>input.todoText {
   border-radius: 10px;
   background-color: hsl(175, 77%, 26%);
   color: white;
+  display: grid;
+  grid-template-rows: 1fr 35px;
 }
 
 .add-todoButton {
