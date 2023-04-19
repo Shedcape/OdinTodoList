@@ -68,7 +68,7 @@ const eventController = {
   },
   deleteProjectListener(node) {
     //Note to self: Delete project logic missing. 
-    node.addEventListener('click', todoController.clearTodos)
+    node.addEventListener('click', (e) => projectController.deleteProject(Number(e.target.dataset.deleteprojectid)))
   }
 }
 
@@ -143,8 +143,27 @@ const projectController = {
     todoController.clearTodos()
     projectController.loadProject(projectid)
   },
-  deleteProject() {
-    //Note to self: Missing logic!!
+  deleteProject(projectid) {
+    console.log(projectid)
+    const active = projectsList.isActive(projectid)
+    projectsList.removeProject(projectid)
+    if (active) {
+      const numberOfProjects = projectsList.length
+      if (numberOfProjects > 0) {
+        document.querySelector('.container').dataset.currentprojectid = 0;
+        projectController.switchProject(0)
+      } else {
+        document.querySelector('.container').dataset.currentprojectid = "";
+        const projectContainer = document.querySelector('.project-container')
+        while (projectContainer.lastElementChild) {
+          projectContainer.removeChild(projectContainer.lastElementChild)
+        }
+        todoController.emptyContainer()
+      }
+    } else {
+      todoController.emptyContainer()
+      projectController.renderProjects(true)
+    }
   }
 }
 

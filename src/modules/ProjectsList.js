@@ -9,6 +9,9 @@ export default class ProjectsList {
     const id = this.list.findIndex(project => project.active)
     return id;
   }
+  isActive(id) {
+    return this.list[id].active
+  }
   addProject(project) {
     this.list.push(project);
   }

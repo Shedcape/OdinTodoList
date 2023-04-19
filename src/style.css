@@ -9,8 +9,8 @@ body {
 }
 
 :root {
-  --button-active: hsl(175, 77%, 16%);
-  --button-hover: hsl(175, 77%, 36%);
+  --button-hover: hsl(175, 77%, 16%);
+  --button-active: hsl(175, 77%, 36%);
   --button-color: hsl(175, 77%, 26%);
   --button-text: white;
   --border-color: black;
@@ -190,16 +190,49 @@ aside {
   font-weight: 600;
 }
 
-.add-button {
+.save-button,
+.change-button,
+.delete-button {
+  width: 75px;
+}
+
+.add-button,
+.save-button,
+.change-button {
   background-color: rgba(90, 219, 90, 0.788);
   border-radius: 5px;
   border: none;
 }
 
-.cancel-button {
+.cancel-button,
+.delete-button {
   background-color: rgba(247, 110, 110, 0.795);
   border-radius: 5px;
   border: none;
+}
+
+.save-button,
+.change-button,
+.delete-button {
+  font-size: 1em;
+  font-weight: 500;
+}
+
+.save-button:hover,
+.change-button:hover,
+.delete-button:hover,
+.add-button:hover,
+.cancel-button:hover {
+  transform: scale(1.05);
+  font-weight: bold;
+}
+
+.save-button:active,
+.change-button:active,
+.delete-button:active,
+.add-button:active,
+.cancel-button:active {
+  transform: scale(1.1);
 }
 
 .todoCard {
@@ -422,9 +455,12 @@ li>input.todoText {
   grid-template-rows: 1fr 35px;
 }
 
+
 .add-todobuttoncontainer {
   height: 400px;
   width: 300px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px 02px rgba(5, 5, 5, 0.40);
 }
 
 .add-todoButton {
@@ -433,7 +469,9 @@ li>input.todoText {
   width: 100%;
   font-family: inherit;
   border: none;
+  border-radius: 10px;
   font-size: 1rem;
+  color: var(--button-text);
   font-weight: bold;
 }
 

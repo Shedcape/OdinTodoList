@@ -23,7 +23,7 @@ const domCreation = {
     div.innerHTML = `
       <img class="project-image" src=${projectImage} alt="Project">
       <h3 class="project-name" data-projectid="${id}">${input}</h3>
-      <img class="delete-project" src=${deleteImage} alt="Delete Project">
+      <img class="delete-project" src=${deleteImage} data-deleteprojectid="${id}" alt="Delete Project">
     `
     return div;
   },
@@ -50,8 +50,8 @@ const domCreation = {
         </select>
       </form>
       <div class="todoControls">
-        <button data-savetodoid="${todoid}" data-todoid="${todoid}" data-projectid="${projectid}">Save</button>
-        <button data-deletetodoid="${todoid}" data-todoid="${todoid}" data-projectid="${projectid}">Delete</button>
+        <button class="save-button" data-savetodoid="${todoid}" data-todoid="${todoid}" data-projectid="${projectid}">Save</button>
+        <button class="delete-button" data-deletetodoid="${todoid}" data-todoid="${todoid}" data-projectid="${projectid}">Delete</button>
       </div>
     </div>`
     container.appendChild(div);
@@ -72,8 +72,8 @@ const domCreation = {
           <p class="todoText" data-inputfortodo="${todoid}">${test[3].value}</p>
         </div>
         <div class="todoControls">
-          <button data-changetodoid="${todoid}" data-todoid="${todoid}" data-projectid="${projectid}">Change</button>
-          <button data-deletetodoid="${todoid}" data-projectid="${projectid}"">Delete</button>
+          <button class="change-button" data-changetodoid="${todoid}" data-todoid="${todoid}" data-projectid="${projectid}">Change</button>
+          <button class="delete-button" data-deletetodoid="${todoid}" data-projectid="${projectid}"">Delete</button>
         </div>
       </div>
     `
@@ -100,8 +100,8 @@ const domCreation = {
         </select>
       </form>
       <div class="todoControls">
-        <button data-savetodoid="${todoid}" data-todoid="${todoid}" data-projectid="${projectid}">Save</button>
-        <button data-deletetodoid="${todoid}" data-todoid="${todoid}" data-projectid="${projectid}">Delete</button>
+        <button class="save-button" data-savetodoid="${todoid}" data-todoid="${todoid}" data-projectid="${projectid}">Save</button>
+        <button class="delete-button" data-deletetodoid="${todoid}" data-todoid="${todoid}" data-projectid="${projectid}">Delete</button>
       </div>
     </div>
 `
