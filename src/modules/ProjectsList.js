@@ -21,8 +21,7 @@ export default class ProjectsList {
   addToDo(projectId, toDo) {
     this.list[projectId].todos.push(toDo);
   }
-  removeToDo(projectId, name) {
-    const index = this.list[projectId].todos.findIndex(x => x.name === name);
+  removeToDo(projectId, index) {
     this.list[projectId].todos.splice(index, 1);
   }
   updateTodo(projectid, todoid, todo) {
@@ -43,5 +42,8 @@ export default class ProjectsList {
   }
   deActivateProject(projectid) {
     this.list[projectid].active = false;
+  }
+  retrieveProjects() {
+    return this.list;
   }
 }

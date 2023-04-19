@@ -13,10 +13,12 @@ const domCreation = {
     `
     return div;
   },
-  createProjectDomElement(id, input) {
+  createProjectDomElement(id, input, active) {
     const div = document.createElement('div');
     div.id = id;
     div.dataset.projectid = id;
+    console.log(active)
+    div.dataset.active = active ? "true" : "false";
     div.classList.add('project')
     div.innerHTML = `
       <img class="project-image" src=${projectImage} alt="Project">
@@ -42,9 +44,9 @@ const domCreation = {
         <input class="todoText" type="date" name="tododuedate" id="tododuedate" data-inputfortodo="${todoid}" value=${dueDate}>
         <p class="todoCategory">Priority:</p>
         <select class="todoText" name="todopriority" id="todopriority" data-inputfortodo="${todoid}" value=${priority}>
-          <option value="Low">Low</option>
-          <option value="Medium">Medium</option>
-          <option value="High">High</option>
+          <option value="Low" ${priority === "Low" && "selected"}>Low</option>
+          <option value="Medium" ${priority === "Medium" && "selected"}>Medium</option>
+          <option value="High" ${priority === "High" && "selected"}>High</option>
         </select>
       </form>
       <div class="todoControls">
@@ -71,7 +73,7 @@ const domCreation = {
         </div>
         <div class="todoControls">
           <button data-changetodoid="${todoid}" data-todoid="${todoid}" data-projectid="${projectid}">Change</button>
-          <button data-deletetodoid="${todoid} data-projectid="${projectid}"">Delete</button>
+          <button data-deletetodoid="${todoid}" data-projectid="${projectid}"">Delete</button>
         </div>
       </div>
     `
@@ -80,6 +82,7 @@ const domCreation = {
     const test = Array.from(document.querySelectorAll(`[data-inputfortodo="${todoid}"]`))
     const div = document.querySelector(`[data-containerfortodo="${todoid}"]`)
     const projectid = Number(document.querySelector(`[data-todoid="${todoid}"]`).dataset.projectid)
+    const priority = test[3].innerHTML;
 
     div.innerHTML = `
     <div class="create-todo">
@@ -91,9 +94,9 @@ const domCreation = {
         <input class="todoText" type="date" name="tododuedate" id="tododuedate" data-inputfortodo="${todoid}" value=${test[2].innerHTML}>
         <p class="todoCategory">Priority:</p>
         <select class="todoText" name="todopriority" id="todopriority" data-inputfortodo="${todoid}" value=${test[3].innerHTML}>
-          <option value="Low">Low</option>
-          <option value="Medium">Medium</option>
-          <option value="High">High</option>
+          <option value="Low" ${priority === "Low" && "selected"}>Low</option>
+          <option value="Medium" ${priority === "Medium" && "selected"}>Medium</option>
+          <option value="High" ${priority === "High" && "selected"}>High</option>
         </select>
       </form>
       <div class="todoControls">
@@ -121,9 +124,9 @@ const domProjectManager = {
     const projectContainer = document.querySelector('.project-container')
     projectContainer.appendChild(element);
   },
-  addProjectDomElement(id, input) {
+  addProjectDomElement(id, input, active) {
     const projectContainer = document.querySelector('.project-container')
-    const div = domCreation.createProjectDomElement(id, input);
+    const div = domCreation.createProjectDomElement(id, input, active);
     projectContainer.appendChild(div);
   }
 }
@@ -161,8 +164,7 @@ const domTodoManager = {
     if (todoContainer.lastElementChild) {
       todoContainer.removeChild(todoContainer.lastElementChild);
     }
-
-  }
+  },
 }
 
 export { domProjectManager, domTodoManager };
