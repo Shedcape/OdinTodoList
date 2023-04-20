@@ -17,7 +17,6 @@ const domCreation = {
     const div = document.createElement('div');
     div.id = id;
     div.dataset.projectid = id;
-    console.log(active)
     div.dataset.active = active ? "true" : "false";
     div.classList.add('project')
     div.innerHTML = `

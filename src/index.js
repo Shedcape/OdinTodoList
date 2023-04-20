@@ -15,27 +15,31 @@ class Project {
   }
 }
 let projectsList = new ProjectsList();
-const dummyProject = { name: "Default", active: false, todos: [{ title: "Hi", description: "Call the electric company regarding the bill.", dueDate: "2023-04-14", priority: "Medium" }] }
-const dummyProject2 = { name: "Default2", active: true, todos: [{ title: "Yo", description: "How you doin?.", dueDate: "2023-04-14", priority: "Medium" }] }
-
-projectsList.addProject(dummyProject);
-projectsList.addProject(dummyProject2);
+const date = new Date()
 
 const storageController = {
+  dummyProjects: [{ name: "Moving", active: false, todos: [{ title: "Book moving company", description: "Call the moving company to book them for the move on Sunday.", dueDate: `${date.toISOString().slice(0, 10)}`, priority: "High" }, { title: "Clean the house", description: "Clean our old house thoroughly.", dueDate: "2023-05-13", priority: "High" }] }, { name: "Test", active: false, todos: [{ title: "Test", description: "Call the moving company to book them for the move on Sunday.", dueDate: "2023-05-14", priority: "High" }, { title: "Clean the house", description: "Clean our old house thoroughly.", dueDate: `${date.toISOString().slice(0, 10)}`, priority: "High" }] }],
   retrieve() {
     const projects = JSON.parse(localStorage.getItem("projects"));
     console.log(projects)
+    return projects;
   },
   store() {
     localStorage.setItem("projects", JSON.stringify(projectsList));
   },
   clear() {
     localStorage.clear()
+  },
+  onStart() {
+    if (localStorage.length > 0) {
+      const projects = storageController.retrieve();
+      console.log(projects)
+      projectsList = new ProjectsList(projects.list)
+    } else {
+      projectsList = new ProjectsList(storageController.dummyProjects)
+    }
   }
 }
-storageController.store();
-storageController.retrieve();
-storageController.clear();
 const eventController = {
   addTodoButtonListener() {
     const addTodoButton = document.querySelector('.add-todobuttoncontainer')
@@ -67,7 +71,6 @@ const eventController = {
     node.addEventListener('click', (e) => projectController.switchProject(Number(e.target.dataset.projectid)));
   },
   deleteProjectListener(node) {
-    //Note to self: Delete project logic missing. 
     node.addEventListener('click', (e) => projectController.deleteProject(Number(e.target.dataset.deleteprojectid)))
   }
 }
@@ -87,9 +90,9 @@ const projectController = {
         projectContainer.removeChild(projectContainer.lastElementChild)
       }
     }
-
     if (projects.length === 0) return;
-
+    //If no project is active, default to the first project.
+    if (!projects.some(project => project.active)) projectsList.activateProject(0)
     projects.forEach((project, index) => {
       domProjectManager.addProjectDomElement(index, project.name, project.active);
       const newProjectElement = document.querySelector(`[data-projectid="${index}"]`);
@@ -144,9 +147,12 @@ const projectController = {
     projectController.loadProject(projectid)
   },
   deleteProject(projectid) {
-    console.log(projectid)
     const active = projectsList.isActive(projectid)
+
+    //Removes the project from the list of projects
     projectsList.removeProject(projectid)
+
+    //If the project was the active one, it automatically switches to the first project, if there is one.
     if (active) {
       const numberOfProjects = projectsList.length
       if (numberOfProjects > 0) {
@@ -161,6 +167,7 @@ const projectController = {
         todoController.emptyContainer()
       }
     } else {
+      //Else if it's not the active project, it rerenders everything.
       todoController.emptyContainer()
       projectController.renderProjects(true)
     }
@@ -232,12 +239,48 @@ const todoController = {
     domTodoManager.clearOutTodos();
   },
 }
-
+storageController.clear()
 document.querySelector('.newProjectPromptButton').addEventListener('click', () => {
   projectController.addNewProjectPrompt();
 })
-todoController.addNewTodoButton();
-todoController.emptyContainer()
-
+window.onload = storageController.onStart();
 projectController.renderProjects()
 
+window.onbeforeunload = storageController.store()
+
+function todosDueToday() {
+  const projects = projectsList.retrieveProjects()
+  console.log(date.toISOString().slice(0, 10))
+  const today = date.toISOString().slice(0, 10)
+  console.log(today)
+  const todos = {}
+  projects.forEach((project, index) => {
+    todos[index] = [];
+    project.todos.forEach((todo, todoidx) => {
+      if (todo.dueDate === today) {
+        todos[index].push({ todoidx: todoidx, todo: todo });
+      }
+    })
+  })
+  console.log(todos)
+  todoController.clearTodos()
+  const container = document.querySelector('.container')
+  const currentProjectId = Number(container.dataset.currentprojectid)
+  container.dataset.currentprojectid = ""
+  projectsList.deActivateProject(currentProjectId)
+
+  for (const index in todos) {
+    console.log(index)
+    todos[index].forEach(element => {
+      domTodoManager.createTodo(element.todoidx, index, element.todo, false)
+      eventController.addChangeButtonListener(element.todoidx)
+      eventController.addDeleteButtonListener(element.todoidx)
+
+    })
+
+  }
+
+}
+
+const today = document.querySelector('.today')
+today.addEventListener('click', todosDueToday)
