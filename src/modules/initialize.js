@@ -9,7 +9,6 @@ export default function initializeDom(projectId = 0) {
       <h1 class="logo-text">To Do Central</h1>
     </header>
     <aside>
-      <button class="today">Show today</button>
       <h2 class="project-text">Projects</h2>
       <img class="newProjectPromptButton" src="${newProjectImage}" alt="New Project">
       <div class="project-container" >

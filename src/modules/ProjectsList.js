@@ -9,6 +9,9 @@ export default class ProjectsList {
     const id = this.list.findIndex(project => project.active)
     return id;
   }
+  todoIndex(projectid, todoid) {
+    return this.list[projectid].todos.findIndex(todo => todo.id === todoid)
+  }
   isActive(id) {
     return this.list[id].active
   }

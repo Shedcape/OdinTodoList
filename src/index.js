@@ -11,14 +11,32 @@ class Project {
   constructor(name, active = false) {
     this.name = name;
     this.active = active;
+    this.usedIds = [];
     this.todos = [];
+  }
+  getNewTodoId() {
+    let id = null;
+    while (id === null || this.usedIds.includes(id)) {
+      id = Math.floor(Math.random() * 10000);
+    }
+    this.usedIds.push(id);
+    return id;
+  }
+}
+class Todo {
+  constructor(title, description, dueDate, priority, id) {
+    this.title = title;
+    this.description = description;
+    this.dueDate = dueDate;
+    this.priority = priority;
+    this.id = id;
   }
 }
 let projectsList = new ProjectsList();
 const date = new Date()
 
 const storageController = {
-  dummyProjects: [{ name: "Moving", active: false, todos: [{ title: "Book moving company", description: "Call the moving company to book them for the move on Sunday.", dueDate: `${date.toISOString().slice(0, 10)}`, priority: "High" }, { title: "Clean the house", description: "Clean our old house thoroughly.", dueDate: "2023-05-13", priority: "High" }] }, { name: "Test", active: false, todos: [{ title: "Test", description: "Call the moving company to book them for the move on Sunday.", dueDate: "2023-05-14", priority: "High" }, { title: "Clean the house", description: "Clean our old house thoroughly.", dueDate: `${date.toISOString().slice(0, 10)}`, priority: "High" }] }],
+  dummyProjects: [{ name: "Moving", active: false, todos: [new Todo("Book moving company", "Call the moving company to book them for the move on Sunday.", `${date.toISOString().slice(0, 10)}`, "High", "946"), new Todo("Clean the house", "Clean our old house thoroughly.", "2023-05-13", "High", "404")] }, { name: "Test", active: false, todos: [new Todo("Test", "Call the moving company to book them for the move on Sunday.", "2023-05-14", "High", "456"), new Todo("Clean the house", "Clean our old house thoroughly.", `${date.toISOString().slice(0, 10)}`, "High", "889")] }],
   retrieve() {
     const projects = JSON.parse(localStorage.getItem("projects"));
     console.log(projects)
@@ -183,38 +201,40 @@ const todoController = {
     eventController.addTodoButtonListener();
   },
   loadProjectTodos(todoArray, projectid) {
-    todoArray.forEach((todo, index) => {
-      domTodoManager.createTodo(index, projectid, todo, false)
-      eventController.addChangeButtonListener(index)
-      eventController.addDeleteButtonListener(index)
+    todoArray.forEach((todo) => {
+      domTodoManager.createTodo(projectid, todo, false)
+      eventController.addChangeButtonListener(todo.id)
+      eventController.addDeleteButtonListener(todo.id)
     })
     domTodoManager.addTodoButton();
     eventController.addTodoButtonListener()
   },
-  addTodo(todoContent, change = true) {
+  addTodo(todo, change = true) {
     const projectid = projectsList.currentProject;
-    const todoid = projectsList.todoLength(projectid)
-    if (!todoContent) {
-      todoContent = { title: "", description: "", dueDate: "", priority: "" }
+    const todoid = projectsList.list[projectid].getNewTodoId();
+    if (!todo) {
+      todo = new Todo("", "", "", "", todoid)
     }
+    console.log(todo)
     domTodoManager.removeAddTodoButton()
-    domTodoManager.createTodo(todoid, projectid, todoContent, change)
+    domTodoManager.createTodo(projectid, todo, change)
     if (!change) {
-      eventController.addChangeButtonListener(todoid)
+      eventController.addChangeButtonListener(todo.id)
     } else {
-      eventController.addSaveButtonListener(todoid);
-      projectsList.addToDo(projectid, todoContent)
+      eventController.addSaveButtonListener(todo.id);
+      projectsList.addToDo(projectid, todo)
     }
-    eventController.addDeleteButtonListener(todoid);
-    const deleteButton = document.querySelector(`[data-deletetodoid="${todoid}"]`)
+    eventController.addDeleteButtonListener(todo.id);
+    const deleteButton = document.querySelector(`[data-deletetodoid="${todo.id}"]`)
     domTodoManager.addTodoButton();
     eventController.addTodoButtonListener();
   },
   saveTodo(todoid, projectid) {
 
-    const test = Array.from(document.querySelectorAll(`[data-inputfortodo="${todoid}"]`))
-    const updatedTodo = { title: test[0].value, description: test[1].value, dueDate: test[2].value, priority: test[3].value }
-    projectsList.updateTodo(projectid, todoid, updatedTodo);
+    const data = Array.from(document.querySelectorAll(`[data-inputfortodo="${todoid}"]`))
+    const updatedTodo = new Todo(data[0].value, data[1].value, data[2].value, data[3].value, todoid)
+    const todoIdx = projectsList.todoIndex(projectid, todoid);
+    projectsList.updateTodo(projectid, todoIdx, updatedTodo);
 
     domTodoManager.saveTodo(todoid)
     eventController.addChangeButtonListener(todoid);
@@ -243,44 +263,8 @@ storageController.clear()
 document.querySelector('.newProjectPromptButton').addEventListener('click', () => {
   projectController.addNewProjectPrompt();
 })
+
 window.onload = storageController.onStart();
 projectController.renderProjects()
 
 window.onbeforeunload = storageController.store()
-
-function todosDueToday() {
-  const projects = projectsList.retrieveProjects()
-  console.log(date.toISOString().slice(0, 10))
-  const today = date.toISOString().slice(0, 10)
-  console.log(today)
-  const todos = {}
-  projects.forEach((project, index) => {
-    todos[index] = [];
-    project.todos.forEach((todo, todoidx) => {
-      if (todo.dueDate === today) {
-        todos[index].push({ todoidx: todoidx, todo: todo });
-      }
-    })
-  })
-  console.log(todos)
-  todoController.clearTodos()
-  const container = document.querySelector('.container')
-  const currentProjectId = Number(container.dataset.currentprojectid)
-  container.dataset.currentprojectid = ""
-  projectsList.deActivateProject(currentProjectId)
-
-  for (const index in todos) {
-    console.log(index)
-    todos[index].forEach(element => {
-      domTodoManager.createTodo(element.todoidx, index, element.todo, false)
-      eventController.addChangeButtonListener(element.todoidx)
-      eventController.addDeleteButtonListener(element.todoidx)
-
-    })
-
-  }
-
-}
-
-const today = document.querySelector('.today')
-today.addEventListener('click', todosDueToday)

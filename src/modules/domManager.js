@@ -26,49 +26,50 @@ const domCreation = {
     `
     return div;
   },
-  createTodo(todoid, projectid, todoContent) {
+  createTodo(projectid, todo) {
     const container = document.querySelector('.container');
     const div = document.createElement('div')
     div.classList.add('todoCard');
     div.classList.add('create-todo');
-    div.dataset.containerfortodo = todoid;
-    const { title, description, dueDate, priority } = todoContent;
+    const { title, description, dueDate, priority, id } = todo;
+    console.log(todo, id)
+    div.dataset.containerfortodo = id;
     div.innerHTML = `
     <div class="create-todo">
-      <form class="formlayout" action="" data-projectid="${projectid}" data-todoid="${todoid}" data-todostatus="change">
-        <input class="todoTitle createTitle" type="text" name="todotitle" id="todotitle" placeholder="Title of the Todo" data-inputfortodo="${todoid}" value="${title}">
+      <form class="formlayout" action="" data-projectid="${projectid}" data-todoid="${id}" data-todostatus="change">
+        <input class="todoTitle createTitle" type="text" name="todotitle" id="todotitle" placeholder="Title of the Todo" data-inputfortodo="${id}" value="${title}">
         <p class="todoCategory">Description:</p>
-        <textarea class="todoText" name="tododesc" id="tododesc" data-inputfortodo="${todoid}">${description}</textarea>
+        <textarea class="todoText" name="tododesc" id="tododesc" data-inputfortodo="${id}">${description}</textarea>
         <p class="todoCategory">Due date:</p>
-        <input class="todoText" type="date" name="tododuedate" id="tododuedate" data-inputfortodo="${todoid}" value=${dueDate}>
+        <input class="todoText" type="date" name="tododuedate" id="tododuedate" data-inputfortodo="${id}" value=${dueDate}>
         <p class="todoCategory">Priority:</p>
-        <select class="todoText" name="todopriority" id="todopriority" data-inputfortodo="${todoid}" value=${priority}>
+        <select class="todoText" name="todopriority" id="todopriority" data-inputfortodo="${id}" value=${priority}>
           <option value="Low" ${priority === "Low" && "selected"}>Low</option>
           <option value="Medium" ${priority === "Medium" && "selected"}>Medium</option>
           <option value="High" ${priority === "High" && "selected"}>High</option>
         </select>
       </form>
       <div class="todoControls">
-        <button class="save-button" data-savetodoid="${todoid}" data-todoid="${todoid}" data-projectid="${projectid}">Save</button>
-        <button class="delete-button" data-deletetodoid="${todoid}" data-todoid="${todoid}" data-projectid="${projectid}">Delete</button>
+        <button class="save-button" data-savetodoid="${id}" data-todoid="${id}" data-projectid="${projectid}">Save</button>
+        <button class="delete-button" data-deletetodoid="${id}" data-todoid="${id}" data-projectid="${projectid}">Delete</button>
       </div>
     </div>`
     container.appendChild(div);
   },
   convertToCompleteTodo(todoid) {
-    const test = Array.from(document.querySelectorAll(`[data-inputfortodo="${todoid}"]`));
+    const data = Array.from(document.querySelectorAll(`[data-inputfortodo="${todoid}"]`));
     const div = document.querySelector(`[data-containerfortodo="${todoid}"]`)
     const projectid = Number(document.querySelector(`[data-todoid="${todoid}"]`).dataset.projectid)
     div.innerHTML = `
       <div class="create-todo">
         <div class="formlayout" data-projectid="${projectid}" data-todoid="${todoid}" data-todostatus="notchange">
-          <h2 data-inputfortodo="${todoid}">${test[0].value}</h2>
+          <h2 data-inputfortodo="${todoid}">${data[0].value}</h2>
           <p class="todoCategory">Description:</p>
-          <p class="todoText" id="tododesc" data-inputfortodo="${todoid}">${test[1].value}</p>
+          <p class="todoText" id="tododesc" data-inputfortodo="${todoid}">${data[1].value}</p>
           <p class="todoCategory">Due date:</p>
-          <p class="todoText" data-inputfortodo="${todoid}">${test[2].value}</p>
+          <p class="todoText" data-inputfortodo="${todoid}">${data[2].value}</p>
           <p class="todoCategory">Priority:</p>
-          <p class="todoText" data-inputfortodo="${todoid}">${test[3].value}</p>
+          <p class="todoText" data-inputfortodo="${todoid}">${data[3].value}</p>
         </div>
         <div class="todoControls">
           <button class="change-button" data-changetodoid="${todoid}" data-todoid="${todoid}" data-projectid="${projectid}">Change</button>
@@ -78,21 +79,21 @@ const domCreation = {
     `
   },
   convertToChangeTodo(todoid) {
-    const test = Array.from(document.querySelectorAll(`[data-inputfortodo="${todoid}"]`))
+    const data = Array.from(document.querySelectorAll(`[data-inputfortodo="${todoid}"]`))
     const div = document.querySelector(`[data-containerfortodo="${todoid}"]`)
     const projectid = Number(document.querySelector(`[data-todoid="${todoid}"]`).dataset.projectid)
-    const priority = test[3].innerHTML;
+    const priority = data[3].innerHTML;
 
     div.innerHTML = `
     <div class="create-todo">
       <form class="formlayout" action="" data-projectid="${projectid}" data-todoid="${todoid}" data-todostatus="change">
-        <input class="todoTitle createTitle" type="text" name="todotitle" id="todotitle" placeholder="Title of the Todo" data-inputfortodo="${todoid}" value="${test[0].innerHTML}">
+        <input class="todoTitle createTitle" type="text" name="todotitle" id="todotitle" placeholder="Title of the Todo" data-inputfortodo="${todoid}" value="${data[0].innerHTML}">
         <p class="todoCategory">Description:</p>
-        <textarea class="todoText" name="tododesc" id="tododesc" data-inputfortodo="${todoid}">${test[1].innerHTML}</textarea>
+        <textarea class="todoText" name="tododesc" id="tododesc" data-inputfortodo="${todoid}">${data[1].innerHTML}</textarea>
         <p class="todoCategory">Due date:</p>
-        <input class="todoText" type="date" name="tododuedate" id="tododuedate" data-inputfortodo="${todoid}" value=${test[2].innerHTML}>
+        <input class="todoText" type="date" name="tododuedate" id="tododuedate" data-inputfortodo="${todoid}" value=${data[2].innerHTML}>
         <p class="todoCategory">Priority:</p>
-        <select class="todoText" name="todopriority" id="todopriority" data-inputfortodo="${todoid}" value=${test[3].innerHTML}>
+        <select class="todoText" name="todopriority" id="todopriority" data-inputfortodo="${todoid}" value=${data[3].innerHTML}>
           <option value="Low" ${priority === "Low" && "selected"}>Low</option>
           <option value="Medium" ${priority === "Medium" && "selected"}>Medium</option>
           <option value="High" ${priority === "High" && "selected"}>High</option>
@@ -146,10 +147,11 @@ const domTodoManager = {
     `
     todoContainer.appendChild(div);
   },
-  createTodo(todoid, projectid, todoContent, change) {
-    domCreation.createTodo(todoid, projectid, todoContent)
+  createTodo(projectid, todo, change) {
+    console.log(todo)
+    domCreation.createTodo(projectid, todo)
     if (!change) {
-      domCreation.convertToCompleteTodo(todoid);
+      domCreation.convertToCompleteTodo(todo.id);
     }
   },
   saveTodo(todoid) {
