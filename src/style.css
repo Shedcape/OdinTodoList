@@ -491,7 +491,7 @@ li>input.todoText {
 }
 
 .todoControls {
-  visibility: hidden;
+  visibility: visible;
   height: 30px;
   display: flex;
   flex-direction: row;

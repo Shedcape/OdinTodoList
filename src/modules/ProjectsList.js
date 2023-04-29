@@ -10,7 +10,7 @@ export default class ProjectsList {
     return id;
   }
   todoIndex(projectid, todoid) {
-    return this.list[projectid].todos.findIndex(todo => todo.id === todoid)
+    return this.list[projectid].todos.findIndex(todo => Number(todo.id) === todoid)
   }
   isActive(id) {
     return this.list[id].active

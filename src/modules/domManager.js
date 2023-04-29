@@ -1,6 +1,8 @@
 //The purpose of this module is to solely handle everything related to the DOM
 import projectImage from "../assets/project-management-icon-png-14.jpg"
 import deleteImage from "../assets/trash-svgrepo-com.svg"
+import TodoCard from "./components/TodoCard.js";
+import TodoCardChange from "./components/TodoCardChange.js";
 
 const domCreation = {
   newProjectPrompt() {
@@ -147,23 +149,42 @@ const domTodoManager = {
     `
     todoContainer.appendChild(div);
   },
-  createTodo(projectid, todo, change) {
-    console.log(todo)
-    domCreation.createTodo(projectid, todo)
-    if (!change) {
-      domCreation.convertToCompleteTodo(todo.id);
+  loadTodo(projectid, todoData, container) {
+    const todoCard = new TodoCard(projectid, todoData)
+    container.appendChild(todoCard);
+  },
+  createTodo(projectid, todoData, container) {
+    console.log(todoData)
+    const todoCard = new TodoCardChange(projectid, todoData);
+    container.appendChild(todoCard);
+  },
+  saveTodo(projectid, todo, container) {
+    const todoElement = document.querySelector(`[data-containerfortodo="${todo.id}"]`)
+    const nextSibling = todoElement.nextElementSibling;
+
+    todoElement.remove();
+    const todoCard = new TodoCard(projectid, todo);
+    if (nextSibling) {
+      container.insertBefore(todoCard, nextSibling)
+    } else {
+      container.appendChild(todoCard)
     }
   },
-  saveTodo(todoid) {
-    domCreation.convertToCompleteTodo(todoid);
-  },
-  changeTodo(todoid) {
-    domCreation.convertToChangeTodo(todoid);
+  changeTodo(projectid, todo, container) {
+    const todoElement = document.querySelector(`[data-containerfortodo="${todo.id}"]`)
+    const nextSibling = todoElement.nextElementSibling;
+    todoElement.remove();
+    const todoCard = new TodoCardChange(projectid, todo)
+    if (nextSibling) {
+      container.insertBefore(todoCard, nextSibling)
+    } else {
+      container.appendChild(todoCard);
+    }
   },
   removeAddTodoButton() {
-    const todoContainer = document.querySelector(".container");
-    if (todoContainer.lastElementChild) {
-      todoContainer.removeChild(todoContainer.lastElementChild);
+    const element = document.querySelector('.add-todobuttoncontainer');
+    if (element) {
+      element.remove();
     }
   },
 }

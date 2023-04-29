@@ -3,40 +3,16 @@ import ProjectsList from "./modules/ProjectsList";
 import { domProjectManager, domTodoManager } from "./modules/domManager";
 import "./reset.css";
 import "./style.css";
+import Todo from "./modules/components/Todo.js"
+import Project from "./modules/components/Project.js"
 
 initializeDom();
 
-
-class Project {
-  constructor(name, active = false) {
-    this.name = name;
-    this.active = active;
-    this.usedIds = [];
-    this.todos = [];
-  }
-  getNewTodoId() {
-    let id = null;
-    while (id === null || this.usedIds.includes(id)) {
-      id = Math.floor(Math.random() * 10000);
-    }
-    this.usedIds.push(id);
-    return id;
-  }
-}
-class Todo {
-  constructor(title, description, dueDate, priority, id) {
-    this.title = title;
-    this.description = description;
-    this.dueDate = dueDate;
-    this.priority = priority;
-    this.id = id;
-  }
-}
 let projectsList = new ProjectsList();
 const date = new Date()
 
 const storageController = {
-  dummyProjects: [{ name: "Moving", active: false, todos: [new Todo("Book moving company", "Call the moving company to book them for the move on Sunday.", `${date.toISOString().slice(0, 10)}`, "High", "946"), new Todo("Clean the house", "Clean our old house thoroughly.", "2023-05-13", "High", "404")] }, { name: "Test", active: false, todos: [new Todo("Test", "Call the moving company to book them for the move on Sunday.", "2023-05-14", "High", "456"), new Todo("Clean the house", "Clean our old house thoroughly.", `${date.toISOString().slice(0, 10)}`, "High", "889")] }],
+  dummyProjects: [new Project("Moving", false, [new Todo("Book moving company", "Call the moving company to book them for the move on Sunday.", `${date.toISOString().slice(0, 10)}`, "High", "946"), new Todo("Clean the house", "Clean our old house thoroughly.", "2023-05-13", "High", "404")]), new Project("Test", false, [new Todo("Test", "Call the moving company to book them for the move on Sunday.", "2023-05-14", "High", "456"), new Todo("Clean the house", "Clean our  house thoroughly.", `${date.toISOString().slice(0, 10)}`, "High", "889")])],
   retrieve() {
     const projects = JSON.parse(localStorage.getItem("projects"));
     console.log(projects)
@@ -61,7 +37,7 @@ const storageController = {
 const eventController = {
   addTodoButtonListener() {
     const addTodoButton = document.querySelector('.add-todobuttoncontainer')
-    addTodoButton.addEventListener('click', () => todoController.addTodo(false, true))
+    addTodoButton.addEventListener('click', () => todoController.addNewTodo())
   },
   addSaveButtonListener(todoid) {
     const saveButton = document.querySelector(`[data-savetodoid="${todoid}"]`)
@@ -201,23 +177,55 @@ const todoController = {
     eventController.addTodoButtonListener();
   },
   loadProjectTodos(todoArray, projectid) {
+    const container = document.querySelector('.container')
     todoArray.forEach((todo) => {
-      domTodoManager.createTodo(projectid, todo, false)
+      domTodoManager.loadTodo(projectid, todo, container)
+      console.log(todo.id)
       eventController.addChangeButtonListener(todo.id)
       eventController.addDeleteButtonListener(todo.id)
     })
     domTodoManager.addTodoButton();
     eventController.addTodoButtonListener()
   },
-  addTodo(todo, change = true) {
+  loadTodo(projectid, todo, container) {
+    domTodoManager.removeAddTodoButton()
+    domTodoManager.loadTodo(projectid, todo, container)
+    eventController.addChangeButtonListener(todo.id)
+    eventController.addDeleteButtonListener(todo.id);
+
+    domTodoManager.addTodoButton();
+    eventController.addTodoButtonListener();
+  },
+  addNewTodo() {
     const projectid = projectsList.currentProject;
+    const todoid = projectsList.list[projectid].getNewTodoId();
+    const container = document.querySelector('.container');
+    const todo = new Todo("", "", "", "", todoid)
+
+    projectsList.addToDo(projectid, todo)
+
+    domTodoManager.removeAddTodoButton();
+    domTodoManager.createTodo(projectid, todo, container)
+
+    eventController.addSaveButtonListener(todo.id);
+    eventController.addDeleteButtonListener(todo.id);
+
+    domTodoManager.addTodoButton();
+    eventController.addTodoButtonListener();
+
+  },
+  addTodo(todo, change = true, container = null) {
+    if (!container) {
+      container = document.querySelector('.container')
+    }
+    const projectid = projectsList.currentProject;
+    console.log(projectid)
     const todoid = projectsList.list[projectid].getNewTodoId();
     if (!todo) {
       todo = new Todo("", "", "", "", todoid)
     }
-    console.log(todo)
     domTodoManager.removeAddTodoButton()
-    domTodoManager.createTodo(projectid, todo, change)
+    domTodoManager.createTodo(projectid, todo, container)
     if (!change) {
       eventController.addChangeButtonListener(todo.id)
     } else {
@@ -225,25 +233,26 @@ const todoController = {
       projectsList.addToDo(projectid, todo)
     }
     eventController.addDeleteButtonListener(todo.id);
-    const deleteButton = document.querySelector(`[data-deletetodoid="${todo.id}"]`)
     domTodoManager.addTodoButton();
     eventController.addTodoButtonListener();
   },
   saveTodo(todoid, projectid) {
-
+    const container = document.querySelector('.container');
     const data = Array.from(document.querySelectorAll(`[data-inputfortodo="${todoid}"]`))
     const updatedTodo = new Todo(data[0].value, data[1].value, data[2].value, data[3].value, todoid)
-    const todoIdx = projectsList.todoIndex(projectid, todoid);
-    projectsList.updateTodo(projectid, todoIdx, updatedTodo);
+    const todoIdx = projectsList.todoIndex(Number(projectid), Number(todoid));
+    projectsList.updateTodo(projectid, todoIdx, updatedTodo, todoid);
 
-    domTodoManager.saveTodo(todoid)
+    domTodoManager.saveTodo(projectid, updatedTodo, container)
     eventController.addChangeButtonListener(todoid);
     eventController.addDeleteButtonListener(todoid);
   },
   changeTodo(e) {
+    const container = document.querySelector('.container');
     const todoid = Number(e.target.dataset.todoid)
     const projectid = Number(e.target.dataset.projectid)
-    domTodoManager.changeTodo(todoid);
+    const todo = projectsList.list[projectid].getTodo(todoid);
+    domTodoManager.changeTodo(projectid, todo, container);
     eventController.addSaveButtonListener(todoid);
     eventController.addDeleteButtonListener(todoid);
   },
