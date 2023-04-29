@@ -214,28 +214,6 @@ const todoController = {
     eventController.addTodoButtonListener();
 
   },
-  addTodo(todo, change = true, container = null) {
-    if (!container) {
-      container = document.querySelector('.container')
-    }
-    const projectid = projectsList.currentProject;
-    console.log(projectid)
-    const todoid = projectsList.list[projectid].getNewTodoId();
-    if (!todo) {
-      todo = new Todo("", "", "", "", todoid)
-    }
-    domTodoManager.removeAddTodoButton()
-    domTodoManager.createTodo(projectid, todo, container)
-    if (!change) {
-      eventController.addChangeButtonListener(todo.id)
-    } else {
-      eventController.addSaveButtonListener(todo.id);
-      projectsList.addToDo(projectid, todo)
-    }
-    eventController.addDeleteButtonListener(todo.id);
-    domTodoManager.addTodoButton();
-    eventController.addTodoButtonListener();
-  },
   saveTodo(todoid, projectid) {
     const container = document.querySelector('.container');
     const data = Array.from(document.querySelectorAll(`[data-inputfortodo="${todoid}"]`))
